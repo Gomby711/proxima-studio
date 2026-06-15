@@ -412,10 +412,10 @@ export default function App() {
             disabled={appUpdate.state === "downloading"}
             className="neon-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg shrink-0 mr-2 disabled:opacity-70"
             style={{ ...s.mono, fontSize: 11, fontWeight: 700, letterSpacing: "0.04em", background: "color-mix(in srgb, var(--tool-accent) 26%, transparent)", color: "#fff", border: "1px solid color-mix(in srgb, var(--tool-accent) 50%, transparent)", boxShadow: "0 0 10px color-mix(in srgb, var(--tool-accent) 30%, transparent)" }}
-            title={appUpdate.state === "ready" ? "Restart to finish updating" : appUpdate.state === "downloading" ? "Downloading update…" : `Version ${appUpdate.version} is available`}
+            title={appUpdate.manual ? `Version ${appUpdate.version} is available — opens the download page in your browser` : appUpdate.state === "ready" ? "Restart to finish updating" : appUpdate.state === "downloading" ? "Downloading update…" : `Version ${appUpdate.version} is available`}
           >
             {appUpdate.state === "ready" ? <RefreshCw size={11} /> : <Download size={11} />}
-            {appUpdate.state === "available" && `Update to v${appUpdate.version}`}
+            {appUpdate.state === "available" && (appUpdate.manual ? `Download v${appUpdate.version}` : `Update to v${appUpdate.version}`)}
             {appUpdate.state === "downloading" && `Updating… ${appUpdate.percent ?? 0}%`}
             {appUpdate.state === "ready" && "Restart to update"}
           </button>

@@ -193,6 +193,10 @@ export interface UpdateStatus {
   percent?: number;
   /** Error detail, when state === 'error'. */
   message?: string;
+  /** macOS (unsigned): can't auto-install, so the update is a manual download. */
+  manual?: boolean;
+  /** Release/download page to open in the browser for a manual update (macOS). */
+  downloadUrl?: string;
 }
 
 // ---- IPC channel names — referenced from both sides, never as literals -----

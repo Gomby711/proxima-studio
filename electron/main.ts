@@ -223,19 +223,66 @@ function createWindow() {
 // electron-updater is CJS; under ESM bundling the class lives on `.default`.
 const { autoUpdater } = electronUpdater;
 
+const UPDATE_REPO = 'Gomby711/proxima-studio';
+let macDownloadUrl = '';
+
 /** Push the current update lifecycle state to the renderer's update indicator. */
 function emitUpdate(s: UpdateStatus) {
   win?.webContents.send(IPC.onUpdate, s);
 }
 
+/** "a is a newer version than b" (numeric major.minor.patch compare). */
+function isNewerVersion(a: string, b: string): boolean {
+  const pa = a.split('.').map(Number);
+  const pb = b.split('.').map(Number);
+  for (let i = 0; i < 3; i++) {
+    const x = pa[i] || 0;
+    const y = pb[i] || 0;
+    if (x !== y) return x > y;
+  }
+  return false;
+}
+
 /**
- * Auto-update via electron-updater + GitHub Releases (see package.json
- * build.publish). Only runs in a packaged build — the dev app has no feed.
- * We don't auto-download: the UI shows an "Update available" indicator and the
- * user chooses when to download and when to restart-to-install.
+ * FREE macOS update check (no paid Apple Developer ID). Squirrel.Mac refuses to
+ * auto-install unsigned updates, so instead we poll GitHub's "latest release"
+ * API, compare versions, and — if a newer one exists — show the update indicator
+ * whose button opens the release page in the browser for a manual download.
+ */
+async function checkMacUpdate() {
+  try {
+    const res = await fetch(`https://api.github.com/repos/${UPDATE_REPO}/releases/latest`, {
+      headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'Proxima-Studio' },
+    });
+    if (!res.ok) return;
+    const data = (await res.json()) as { tag_name?: string; html_url?: string };
+    const latest = String(data.tag_name ?? '').replace(/^v/, '');
+    if (latest && isNewerVersion(latest, app.getVersion())) {
+      macDownloadUrl = data.html_url ?? `https://github.com/${UPDATE_REPO}/releases/latest`;
+      emitUpdate({ state: 'available', version: latest, manual: true, downloadUrl: macDownloadUrl });
+    } else {
+      emitUpdate({ state: 'none' });
+    }
+  } catch {
+    /* offline — retry on the next interval */
+  }
+}
+
+/**
+ * Update lifecycle. Only runs in a packaged build (dev has no feed).
+ * - Windows/Linux: real in-app auto-update via electron-updater + GitHub Releases.
+ * - macOS: free notify-and-open-download flow (see checkMacUpdate) since unsigned
+ *   apps can't auto-install.
  */
 function setupAutoUpdate() {
   if (!app.isPackaged) return;
+
+  if (process.platform === 'darwin') {
+    checkMacUpdate();
+    setInterval(checkMacUpdate, 6 * 60 * 60 * 1000);
+    return;
+  }
+
   autoUpdater.autoDownload = false;          // wait for the user to click "Update"
   autoUpdater.autoInstallOnAppQuit = true;   // if downloaded, also install on next quit
 
@@ -473,13 +520,22 @@ ipcMain.handle(IPC.sysStats, async () => readStats());
 
 ipcMain.handle(IPC.appVersion, async () => app.getVersion());
 ipcMain.handle(IPC.updateCheck, async () => {
+  if (process.platform === 'darwin') return checkMacUpdate();
   try { await autoUpdater.checkForUpdates(); } catch { /* offline / no feed yet */ }
 });
 ipcMain.handle(IPC.updateDownload, async () => {
+  // macOS (unsigned): no in-app install — open the release page to download.
+  if (process.platform === 'darwin') {
+    await shell.openExternal(macDownloadUrl || `https://github.com/${UPDATE_REPO}/releases/latest`);
+    return;
+  }
   try { await autoUpdater.downloadUpdate(); }
   catch (err) { emitUpdate({ state: 'error', message: String(err) }); }
 });
-ipcMain.handle(IPC.updateInstall, async () => { autoUpdater.quitAndInstall(); });
+ipcMain.handle(IPC.updateInstall, async () => {
+  if (process.platform === 'darwin') return;
+  autoUpdater.quitAndInstall();
+});
 
 ipcMain.handle(IPC.win, async (_e, action: WinAction) => {
   if (!win) return;
