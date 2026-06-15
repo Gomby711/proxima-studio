@@ -40,7 +40,7 @@
     "appId": "com.proxima.studio",
     "productName": "Proxima Studio",
     "publish": [
-      { "provider": "github", "owner": "Gomby711", "repo": "proxima-studio" }
+      { "provider": "github", "owner": "Gomby711", "repo": "proxima-studio", "releaseType": "release" }
     ],
     "files": [
       "dist",
