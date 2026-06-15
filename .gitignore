@@ -1,0 +1,11 @@
+node_modules/
+dist/
+dist-electron/
+release/
+release-build/
+app-build/
+distribution/
+sf-pro-font-files/
+*.log
+*.lnk
+.DS_Store

@@ -1,0 +1,106 @@
+{
+  "name": "proxima-studio",
+  "version": "0.1.0",
+  "description": "Proxima Studio — pic & video file conversion plus HD downloads from YouTube/Instagram",
+  "author": "",
+  "license": "MIT",
+  "main": "dist-electron/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build && electron-builder",
+    "build:dir": "tsc --noEmit && vite build && electron-builder --dir",
+    "release": "tsc --noEmit && vite build && electron-builder --publish always",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.12",
+    "@types/node": "^22.10.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "tailwindcss": "^4.1.12",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vite-plugin-electron": "^0.29.0",
+    "vite-plugin-electron-renderer": "^0.14.6"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9",
+    "ffmpeg-static": "^5.2.0",
+    "lucide-react": "^0.487.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "yt-dlp-wrap": "^2.3.12"
+  },
+  "build": {
+    "appId": "com.proxima.studio",
+    "productName": "Proxima Studio",
+    "publish": [
+      { "provider": "github", "owner": "Gomby711", "repo": "proxima-studio" }
+    ],
+    "files": [
+      "dist",
+      "dist-electron"
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "extraResources": [
+      {
+        "from": "build/splash.png",
+        "to": "splash.png"
+      },
+      {
+        "from": "build/icon.png",
+        "to": "icon.png"
+      }
+    ],
+    "asarUnpack": [
+      "**/node_modules/ffmpeg-static/**"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "shortcutName": "Proxima Studio"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "category": "public.app-category.video"
+    },
+    "dmg": {
+      "title": "Proxima Studio"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "build/icon.png",
+      "category": "AudioVideo"
+    }
+  }
+}

@@ -1,0 +1,53 @@
+@import 'tailwindcss';
+@import './styles/theme.css';
+
+/* Self-hosted SF Pro Display (bundled OTF, rendered natively by Chromium).
+   Bundled by Vite and served from 'self' so the app's CSP (default-src 'self')
+   allows it. Only the non-italic Regular/Medium/Bold weights ship; 600 maps to
+   Bold since the source set has no non-italic Semibold. */
+@font-face {
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/sf-pro/SFProDisplay-Regular.otf') format('opentype');
+}
+@font-face {
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./assets/fonts/sf-pro/SFProDisplay-Medium.otf') format('opentype');
+}
+@font-face {
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('./assets/fonts/sf-pro/SFProDisplay-Bold.otf') format('opentype');
+}
+@font-face {
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/sf-pro/SFProDisplay-Bold.otf') format('opentype');
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/* App-wide typographic defaults: SF Pro Display everywhere, with the OpenType
+   features that keep text crisp and evenly spaced instead of cramped. */
+:root {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-feature-settings: 'calt' 1, 'liga' 1;
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
