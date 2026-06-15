@@ -1,0 +1,6 @@
+PROXIMA STUDIO APP DOWNLOAD ->
+
+- DIRECT APP DOWNLOAD: https://github.com/Gomby711/proxima-studio/releases/latest
+
+- Page: https://github.com/Gomby711/proxima-studio/releases/tag/v0.1.0
+

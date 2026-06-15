@@ -41,6 +41,7 @@ const IMAGE_PROFILES = [
   { id: "retina",  label: "Retina @2×",  desc: "PNG · Q85 · hi-DPI screens",       ext: "png",  quality: 85 },
   { id: "print",   label: "Print",       desc: "TIFF · Q95 · press-ready",         ext: "tiff", quality: 95 },
   { id: "archive", label: "Archive",     desc: "PNG · Lossless · no quality loss", ext: "png",  quality: 100 },
+  { id: "exr",     label: "EXR (HDR)",   desc: "EXR · 16-bit half · ZIP · VFX",    ext: "exr",  quality: 75 },
 ];
 
 const VIDEO_PROFILES = [

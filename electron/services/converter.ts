@@ -27,7 +27,7 @@ function resolveOutputPath(desired: string, inputPath: string, overwrite: boolea
   return candidate;
 }
 
-const IMAGE_EXT = new Set(['png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp', 'tiff', 'avif']);
+const IMAGE_EXT = new Set(['png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp', 'tiff', 'avif', 'exr']);
 const AUDIO_EXT = new Set(['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg', 'opus', 'wma', 'aiff', 'aif']);
 
 /** Live ffmpeg processes keyed by jobId, so the UI can cancel them. */
@@ -58,6 +58,13 @@ function audioArgs(format: string, quality: ConvertRequest['quality']): string[]
 function qualityArgs(format: string, quality: ConvertRequest['quality'], req?: ConvertRequest): string[] {
   const f = format.toLowerCase();
   if (AUDIO_EXT.has(f)) return audioArgs(f, quality);
+  if (f === 'exr') {
+    // OpenEXR (HDR/VFX) is always lossless float. ZIP-compress (zip16) so the
+    // file isn't enormous; high/lossless keep 32-bit float precision, lower
+    // presets drop to 16-bit half-float for a much smaller file.
+    const pixelType = quality === 'high' || quality === 'lossless' ? 'float' : 'half';
+    return ['-compression', 'zip16', '-format', pixelType];
+  }
   if (IMAGE_EXT.has(f)) {
     // For images, CRF-style quality maps to the codec's quantizer.
     switch (quality) {
