@@ -1,6 +1,6 @@
 {
   "name": "proxima-studio",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Proxima Studio — pic & video file conversion plus HD downloads from YouTube/Instagram",
   "author": "",
   "license": "MIT",
@@ -40,7 +40,12 @@
     "appId": "com.proxima.studio",
     "productName": "Proxima Studio",
     "publish": [
-      { "provider": "github", "owner": "Gomby711", "repo": "proxima-studio", "releaseType": "release" }
+      {
+        "provider": "github",
+        "owner": "Gomby711",
+        "repo": "proxima-studio",
+        "releaseType": "release"
+      }
     ],
     "files": [
       "dist",
